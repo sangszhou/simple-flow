@@ -1,9 +1,12 @@
 package com.example.domain;
 
 import com.example.api.TaskBuilder;
+import com.example.util.JsonHelper;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.SuperBuilder;
+import org.apache.ibatis.annotations.Arg;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,12 +20,10 @@ public class TaskDefinition extends NodeDefinition {
     // 版本号, 可选值
     int version;
     int maxRetry;
-    // 有些参数是给定的
-//    Map<String, Object> arg;
     // 有些输出是制定的
     String output;
 
-    Map<String, Object> detailArg;
+    Map<String, ArgInfo> detailArg;
 
     @Override
     public String getId() {
@@ -43,20 +44,28 @@ public class TaskDefinition extends NodeDefinition {
         return null;
     }
 
-    public Map<String, Object> getDetailedArg() {
+    public Map<String, ArgInfo> getDetailedArg() {
         if (detailArg == null) {
             detailArg = new HashMap<>();
         }
         return detailArg;
     }
 
-//    public TaskDefinition withClazz(Class<? extends TaskBuilder> tb) {
-//        this.className = tb.getName();
-//        return this;
-//    }
+    public TaskDefinition constArg(String key, Object value) throws JsonProcessingException {
+        getDetailedArg().put(key, ArgInfo.builder()
+                        .type("const")
+                        .key(key)
+                        .value(JsonHelper.getMapper().writeValueAsString(value))
+                .build());
+        return this;
+    }
 
-    public TaskDefinition constArg(String key, Object value) {
-        getDetailedArg().put(key, value);
+    public TaskDefinition dynamicArg(String key, String valueDef) {
+        getDetailedArg().put(key, ArgInfo.builder()
+                .type("dynamic")
+                .key(key)
+                .value(valueDef)
+                .build());
         return this;
     }
 

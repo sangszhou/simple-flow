@@ -3,6 +3,7 @@ package com.example.demo.app_lifecycle.controller;
 import com.example.api.RestResponse;
 import com.example.demo.app_lifecycle.flow.AppCreateFlow;
 import com.example.demo.app_lifecycle.flow.AppDeleteFlow;
+import com.example.demo.app_lifecycle.flow.AppExpansionFlow;
 import com.example.domain.FlowInput;
 import com.example.runner.FlowService;
 import com.google.common.collect.ImmutableMap;
@@ -63,4 +64,32 @@ public class AppLifecycleController {
                     .build();
         }
     }
+
+    @PostMapping("expandApp")
+    public RestResponse<Long> expandApp(@RequestParam String appName,
+                                        @RequestParam String operator,
+                                        @RequestParam Integer num) {
+        String lb = "127.0.0.1";
+        FlowInput flowInput = FlowInput.builder()
+                .operator(operator)
+                .input(ImmutableMap.of(
+                        "appName", appName,
+                        "lb", lb,
+                        "num", num+""))
+                .build();
+        try {
+            long id = flowService.startFlow(AppExpansionFlow.class, flowInput);
+            return RestResponse.<Long>builder()
+                    .code(200)
+                    .data(id)
+                    .build();
+        } catch (Exception e) {
+            logger.error("failed to expand app: |{}|", appName, e);
+            return RestResponse.<Long>builder()
+                    .code(500)
+                    .message(e.getMessage())
+                    .build();
+        }
+    }
+
 }

@@ -9,11 +9,12 @@ import com.example.demo.app_lifecycle.task.UserTask;
 import com.example.domain.FlowInput;
 import com.example.domain.NodeDefinition;
 import com.example.domain.TaskDefinition;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 public class AppDeleteFlow implements FlowBuilder {
 
     @Override
-    public NodeDefinition build(FlowInput flowInput) {
+    public NodeDefinition build(FlowInput flowInput) throws JsonProcessingException {
         String appName = flowInput.getInput().get("appName");
 
         TaskDefinition userTask = TaskDefinition.builder()

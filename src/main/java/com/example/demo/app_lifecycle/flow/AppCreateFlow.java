@@ -7,6 +7,7 @@ import com.example.demo.app_lifecycle.task.CreateWorkloadTask;
 import com.example.domain.FlowInput;
 import com.example.domain.NodeDefinition;
 import com.example.domain.TaskDefinition;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.List;
 public class AppCreateFlow implements FlowBuilder {
 
     @Override
-    public NodeDefinition build(FlowInput flowInput) {
+    public NodeDefinition build(FlowInput flowInput) throws JsonProcessingException {
         String appName = flowInput.getInput().get("appName");
 
         TaskDefinition createAppTask = TaskDefinition.builder()

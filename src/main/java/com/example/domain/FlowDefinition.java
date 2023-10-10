@@ -1,7 +1,6 @@
 package com.example.domain;
 
 import com.example.api.FlowBuilder;
-import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.SuperBuilder;
 import org.springframework.util.StringUtils;

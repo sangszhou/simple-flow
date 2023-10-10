@@ -58,7 +58,7 @@ public class FlowService {
         }
     }
 
-    private NodeInstance parseNode(long flowId, NodeDefinition nodeDefinition) throws Exception {
+    public NodeInstance parseNode(long flowId, NodeDefinition nodeDefinition) throws Exception {
         NodeInstance nodeInstance = null;
         if (nodeDefinition instanceof TaskDefinition) {
             nodeInstance = parseTaskNode(flowId, (TaskDefinition) nodeDefinition);

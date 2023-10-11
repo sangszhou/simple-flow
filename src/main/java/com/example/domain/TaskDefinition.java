@@ -52,7 +52,8 @@ public class TaskDefinition extends NodeDefinition {
     }
 
     public TaskDefinition constArg(String key, Object value) throws JsonProcessingException {
-        getDetailedArg().put(key, ArgInfo.builder()
+        getDetailedArg().put(key,
+                ArgInfo.builder()
                         .type("const")
                         .key(key)
                         .value(JsonHelper.getMapper().writeValueAsString(value))

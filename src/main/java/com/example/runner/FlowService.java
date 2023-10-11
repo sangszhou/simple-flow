@@ -109,7 +109,6 @@ public class FlowService {
                 .nodeType(Const.FLOW)
                 .arg(JsonHelper.getMapper().writeValueAsString(flowDefinition.getFlowInput()))
                 .build();
-//        nodeService.create(nodeInstance);
         return nodeInstance;
     }
 
@@ -130,9 +129,8 @@ public class FlowService {
                 .nodeId(taskDefinition.getId())
                 .name(name)
                 .className(taskDefinition.getClassName())
-//                .arg(JsonHelper.getMapper().writeValueAsString(taskDefinition.getDetailArg()))
+                .arg(JsonHelper.getMapper().writeValueAsString(taskDefinition.getDetailArg()))
                 .build();
-//        nodeService.create(nodeInstance);
         return nodeInstance;
     }
 
@@ -152,10 +150,8 @@ public class FlowService {
 //                .del(false)
                 .nodeType(Const.SWITCH)
                 .nodeStatus(Const.INVALID)
-//                .arg(JsonHelper.getMapper().writeValueAsString(savedConditionInfo))
+                .arg(JsonHelper.getMapper().writeValueAsString(savedConditionInfo))
                 .build();
-
-//        nodeService.create(nodeInstance);
 
         // 处理 condition 节点
         for (NodeDefinition childNodeDefinition : conditionInfo.values()) {

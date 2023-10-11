@@ -8,6 +8,7 @@ import com.example.domain.NodeInstance;
 import com.example.service.NodeService;
 import com.example.util.JsonHelper;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,7 @@ public class TaskNodeRunner {
 
         Map<String, ArgInfo> argInfoMap = new HashMap<>();
         if (!StringUtils.isEmpty(constArgs)) {
-            argInfoMap = JsonHelper.getMapper().readValue(constArgs, Map.class);
+            argInfoMap = JsonHelper.getMapper().readValue(constArgs, new TypeReference<Map<String, ArgInfo>>(){});
         }
 
         Class<TaskBuilder> clazz = (Class<TaskBuilder>) Class.forName(className);

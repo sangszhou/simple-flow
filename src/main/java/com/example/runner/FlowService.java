@@ -103,7 +103,7 @@ public class FlowService {
                 .parentFlowId(flowId)
 //                .del(false)
                 .nodeId(flowDefinition.getId())
-                .name(flowDefinition.getFlowName())
+                .name(flowDefinition.getName())
                 .className(flowDefinition.getClazz().getName())
                 .nodeStatus(Const.INVALID)
                 .nodeType(Const.FLOW)

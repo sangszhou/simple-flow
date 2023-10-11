@@ -50,7 +50,7 @@ public class FlowRunner {
         flowNode.setNodeStatus(Const.RUNNING);
         nodeService.update(flowNode);
 
-        flowService.startNode(flowNode);
+//        flowService.startNode(flowNode);
     }
 
     public void runningFlow(NodeInstance flowNode) {

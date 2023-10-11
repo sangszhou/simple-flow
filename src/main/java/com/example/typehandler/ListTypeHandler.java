@@ -18,29 +18,29 @@ import java.util.List;
  *
  */
 @Slf4j
-public class ListTypeHandler extends BaseTypeHandler<List<Object>> {
+public class ListTypeHandler extends BaseTypeHandler<List<String>> {
 
     @Override
-    public void setNonNullParameter(PreparedStatement ps, int i, List<Object> parameter, JdbcType jdbcType) throws SQLException {
+    public void setNonNullParameter(PreparedStatement ps, int i, List<String> parameter, JdbcType jdbcType) throws SQLException {
         ps.setString(i, serialize(parameter));
     }
 
     @Override
-    public List<Object> getNullableResult(ResultSet rs, String columnName) throws SQLException {
+    public List<String> getNullableResult(ResultSet rs, String columnName) throws SQLException {
         return deserialize(rs.getString(columnName));
     }
 
     @Override
-    public List<Object> getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
+    public List<String> getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
         return deserialize(rs.getString(columnIndex));
     }
 
     @Override
-    public List<Object> getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
+    public List<String> getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
         return deserialize(cs.getString(columnIndex));
     }
 
-    private static String serialize(List<Object> parameter) {
+    private static String serialize(List<String> parameter) {
         String serializedMap = null;
         try {
             serializedMap = JsonHelper.getMapper().writeValueAsString(parameter);
@@ -50,13 +50,12 @@ public class ListTypeHandler extends BaseTypeHandler<List<Object>> {
         return serializedMap;
     }
 
-    private static List<Object> deserialize(String data) {
+    private static List<String> deserialize(String data) {
         if (StringUtils.isEmpty(data)) {
             return null;
         }
         try {
-            return JsonHelper.getMapper().readValue(data, new TypeReference<List<Object>>() {
-            });
+            return JsonHelper.getMapper().readValue(data, new TypeReference<List<String>>() {});
         } catch (Exception e) {
             log.error("反序列化失败", e);
         }

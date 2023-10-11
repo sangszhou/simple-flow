@@ -16,8 +16,6 @@ public class BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-//    @Column(name = "create_by")
-//    private String createBy;
 
     @Column(name = "create_time", updatable = false)
     @JsonFormat(timezone = "Asia/Shanghai", pattern = "yyyy-MM-dd HH:mm:ss")

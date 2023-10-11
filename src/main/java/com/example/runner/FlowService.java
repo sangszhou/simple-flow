@@ -3,6 +3,7 @@ package com.example.runner;
 import com.example.api.FlowBuilder;
 import com.example.domain.*;
 import com.example.service.NodeService;
+import com.example.util.Const;
 import com.example.util.JsonHelper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.slf4j.Logger;
@@ -10,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import tk.mybatis.mapper.entity.Example;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -35,19 +37,23 @@ public class FlowService {
         try {
             NodeDefinition firstNode = flowName.newInstance().build(flowInput);
             NodeInstance nodeInstance = NodeInstance.builder()
-                    .createTime(LocalDateTime.now())
-                    .updateTime(LocalDateTime.now())
-                    .del(false)
+//                    .createTime(LocalDateTime.now())
+//                    .updateTime(LocalDateTime.now())
+//                    .del(false)
                     .nodeId(flowName.getName())
                     .name(flowName.getSimpleName())
-                    .nodeType("flow")
-                    .nodeStatus(-1)
-                    .arg(JsonHelper.getMapper().writeValueAsString(flowInput))
+                    .nodeType(Const.FLOW)
+                    .nodeStatus(Const.INVALID)
+//                    .arg(JsonHelper.getMapper().writeValueAsString(flowInput))
                     .build();
 
             nodeService.create(nodeInstance);
             parseNode(nodeInstance.getId(), firstNode);
-            nodeInstance.setNodeStatus(0);
+            // 流程开始执行
+            nodeInstance.setNodeStatus(Const.RUNNING);
+            nodeService.update(nodeInstance);
+
+            // find starter node to init
             return nodeInstance.getId();
         } catch (InstantiationException e) {
             throw e;
@@ -55,6 +61,15 @@ public class FlowService {
             throw e;
         } catch (JsonProcessingException e) {
             throw e;
+        }
+    }
+
+    // 不需要主动开始，可以靠控制节点的 running 逻辑来驱动
+    public void startNode(NodeInstance flowNode) {
+        List<NodeInstance> instanceList = nodeService.findNoPredecessorNode(flowNode);
+        for (NodeInstance nodeInstance : instanceList) {
+            nodeInstance.setNodeStatus(Const.INIT);
+            nodeService.update(nodeInstance);
         }
     }
 
@@ -83,13 +98,15 @@ public class FlowService {
 
     private NodeInstance parseFlowNode(long flowId, FlowDefinition flowDefinition) throws JsonProcessingException {
         NodeInstance nodeInstance = NodeInstance.builder()
-                .createTime(LocalDateTime.now())
-                .updateTime(LocalDateTime.now())
+//                .createTime(LocalDateTime.now())
+//                .updateTime(LocalDateTime.now())
                 .parentFlowId(flowId)
+//                .del(false)
                 .nodeId(flowDefinition.getId())
                 .name(flowDefinition.getFlowName())
-                .nodeStatus(-1)
-                .nodeType("flow")
+                .className(flowDefinition.getClazz().getName())
+                .nodeStatus(Const.INVALID)
+                .nodeType(Const.FLOW)
                 .arg(JsonHelper.getMapper().writeValueAsString(flowDefinition.getFlowInput()))
                 .build();
 //        nodeService.create(nodeInstance);
@@ -104,15 +121,16 @@ public class FlowService {
         }
 
         NodeInstance nodeInstance = NodeInstance.builder()
-                .createTime(LocalDateTime.now())
-                .updateTime(LocalDateTime.now())
+//                .createTime(LocalDateTime.now())
+//                .updateTime(LocalDateTime.now())
                 .parentFlowId(flowId)
-                .nodeStatus(-1)
-                .nodeType("task")
+                .nodeStatus(Const.INVALID)
+                .nodeType(Const.TASK)
+//                .del(false)
                 .nodeId(taskDefinition.getId())
                 .name(name)
                 .className(taskDefinition.getClassName())
-                .arg(JsonHelper.getMapper().writeValueAsString(taskDefinition.getDetailArg()))
+//                .arg(JsonHelper.getMapper().writeValueAsString(taskDefinition.getDetailArg()))
                 .build();
 //        nodeService.create(nodeInstance);
         return nodeInstance;
@@ -126,14 +144,15 @@ public class FlowService {
         }
 
         NodeInstance nodeInstance = NodeInstance.builder()
-                .createTime(LocalDateTime.now())
-                .updateTime(LocalDateTime.now())
+//                .createTime(LocalDateTime.now())
+//                .updateTime(LocalDateTime.now())
                 .parentFlowId(flowId)
                 .nodeId("switchNode:"+new Random().nextInt(1000))
                 .name("switchNode")
-                .nodeType("switch")
-                .nodeStatus(-1)
-                .arg(JsonHelper.getMapper().writeValueAsString(savedConditionInfo))
+//                .del(false)
+                .nodeType(Const.SWITCH)
+                .nodeStatus(Const.INVALID)
+//                .arg(JsonHelper.getMapper().writeValueAsString(savedConditionInfo))
                 .build();
 
 //        nodeService.create(nodeInstance);

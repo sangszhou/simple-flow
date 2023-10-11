@@ -2,11 +2,13 @@ package com.example;
 
 import org.springframework.boot.*;
 import org.springframework.boot.autoconfigure.*;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.bind.annotation.*;
 import tk.mybatis.spring.annotation.MapperScan;
 
 @SpringBootApplication
 @RestController
+@EnableScheduling
 @MapperScan(basePackages = {"com.example.mapper"})
 public class DemoApplication {
 

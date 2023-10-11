@@ -1,7 +1,9 @@
 package com.example.runner;
 
 import com.example.domain.NodeInstance;
+import com.example.domain.NodeStatusEnum;
 import com.example.service.NodeService;
+import com.example.util.Const;
 import com.example.util.JsonHelper;
 import com.sun.nio.sctp.NotificationHandler;
 import org.slf4j.Logger;
@@ -30,8 +32,9 @@ public class SwitchNodeRunner {
                 break;
             }
         }
-        if (conditionMap.containsKey("system#other") && StringUtils.isEmpty(targetId)) {
-            targetId = conditionMap.get("system#other");
+
+        if (conditionMap.containsKey(Const.SwitchDefault) && StringUtils.isEmpty(targetId)) {
+            targetId = conditionMap.get(Const.SwitchDefault);
         }
         NodeInstance targetNode = NodeInstance.builder()
                 .nodeId(targetId)
@@ -44,9 +47,9 @@ public class SwitchNodeRunner {
         }
 
         targetNode = nodeInstance.get(0);
-        if (targetNode.getNodeStatus() == -1) {
+        if (targetNode.getNodeStatus().equals(Const.INVALID)) {
             // invalid -> init
-            targetNode.setNodeStatus(0);
+            targetNode.setNodeStatus(Const.INIT);
             nodeService.update(targetNode);
         } else {
             logger.error("target node status is not |invalid|, but: |{}|", targetNode.getNodeStatus());

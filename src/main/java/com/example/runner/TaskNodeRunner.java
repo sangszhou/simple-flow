@@ -8,14 +8,21 @@ import com.example.domain.NodeInstance;
 import com.example.service.NodeService;
 import com.example.util.JsonHelper;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
+@Service
 public class TaskNodeRunner {
+    private Logger logger = LoggerFactory.getLogger(TaskNodeRunner.class);
+
     @Autowired
     NodeService nodeService;
 
@@ -24,8 +31,12 @@ public class TaskNodeRunner {
         String className = nodeInstance.getClassName();
         // const args，假设全是简单类型
         String constArgs = nodeInstance.getArg();
-        Map<String, ArgInfo> argInfoMap = JsonHelper.getMapper()
-                .readValue(constArgs, Map.class);
+
+        Map<String, ArgInfo> argInfoMap = new HashMap<>();
+        if (!StringUtils.isEmpty(constArgs)) {
+            argInfoMap = JsonHelper.getMapper().readValue(constArgs, Map.class);
+        }
+
         Class<TaskBuilder> clazz = (Class<TaskBuilder>) Class.forName(className);
         Object instance = clazz.getDeclaredConstructor().newInstance();
         Field[] fields = clazz.getDeclaredFields();
@@ -36,6 +47,10 @@ public class TaskNodeRunner {
             String fieldName = field.getName();
             ArgInfo argInfo = argInfoMap.get(fieldName);
             field.setAccessible(true);
+            if (argInfo == null) {
+                logger.error("failed to get args of name: |{}|", fieldName);
+                continue;
+            }
             // 这里全部整合成 string 类型，可能会有问题
             field.set(instance, argInfo.getValue());
         }

@@ -4,6 +4,7 @@ import com.example.annotation.Input;
 import com.example.annotation.Output;
 import com.example.api.TaskBuilder;
 import com.example.api.TaskResult;
+import com.example.util.Const;
 import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +25,8 @@ public class CreateEcsTask implements TaskBuilder {
         ecsIpList = Lists.newArrayList("1.1.1.1", "2.2.2.2");
         logger.info("create ecs task, num:|{}|, ecsSnList:{}", num,
                 ecsIpList.stream().reduce((a, b) -> a + "," + b));
-        return null;
+        return TaskResult.builder()
+                .status(Const.SUCCESS)
+                .build();
     }
 }

@@ -14,4 +14,8 @@ public class Const {
     public static String PARALLEL = "parallel";
 
     public static String SwitchDefault = "system#other";
+
+    public static String ConstArg = "const";
+    public static String DynamicArg = "dynamic";
+
 }

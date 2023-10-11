@@ -22,7 +22,7 @@ public class BindEcsToLbTask implements TaskBuilder {
     public TaskResult execute() {
         if (ecsIpList != null) {
             logger.info("bind ecs: |{}| to lb: |{}|",
-                    ecsIpList.stream().reduce((a, b) -> a + "->" + b), lb);
+                    ecsIpList.stream().reduce((a, b) -> a + "->" + b).orElse("null"), lb);
         }
         return TaskResult.builder()
                 .status(Const.SUCCESS)

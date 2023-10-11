@@ -13,6 +13,6 @@ public class ArgInfo {
     }
 
     String key;
-    String value;
+    Object value;
     String type;
 }

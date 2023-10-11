@@ -56,7 +56,7 @@ public class TaskDefinition extends NodeDefinition {
                 ArgInfo.builder()
                         .type("const")
                         .key(key)
-                        .value(JsonHelper.getMapper().writeValueAsString(value))
+                        .value(value)
                 .build());
         return this;
     }

@@ -18,6 +18,7 @@ public class EcsCreateFlow implements FlowBuilder {
 
         TaskDefinition createEcs = TaskDefinition.builder()
                 .clazz(CreateEcsTask.class)
+                .name("createEcsTask")
                 .build()
                 .constArg("num", ecsNum);
 
@@ -25,7 +26,7 @@ public class EcsCreateFlow implements FlowBuilder {
                 .clazz(BindEcsToLbTask.class)
                 .build()
                 .constArg("lb", lb)
-                .dynamicArg("ecsIpList", "createEcs.ecsIpList");
+                .dynamicArg("ecsIpList", "createEcsTask.ecsIpList");
 
         createEcs.followBy(ecsBindLb);
 

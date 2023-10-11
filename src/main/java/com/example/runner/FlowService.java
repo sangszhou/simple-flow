@@ -154,9 +154,10 @@ public class FlowService {
                 .build();
 
         // 处理 condition 节点
-        for (NodeDefinition childNodeDefinition : conditionInfo.values()) {
-            parseNode(flowId, childNodeDefinition);
-        }
+//        for (NodeDefinition childNodeDefinition : conditionInfo.values()) {
+//            NodeInstance frontNode = parseNode(flowId, childNodeDefinition);
+//            nodeInstance.addPreNode(frontNode.getNodeId());
+//        }
 
         return nodeInstance;
     }

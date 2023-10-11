@@ -32,6 +32,7 @@ public class SwitchDefinition extends NodeDefinition{
 
     public SwitchDefinition when(String condition, NodeDefinition nodeDefinition) {
         getConditionalInfo().put(condition, nodeDefinition);
+        getNextNode().add(nodeDefinition);
         return this;
     }
 
@@ -41,6 +42,7 @@ public class SwitchDefinition extends NodeDefinition{
      */
     public void missingMatch(NodeDefinition nodeDefinition) {
         getConditionalInfo().put("system_other", nodeDefinition);
+        getNextNode().add(nodeDefinition);
     }
 
 }

@@ -5,6 +5,8 @@ import com.example.domain.NodeStatusEnum;
 import com.example.service.NodeService;
 import com.example.util.Const;
 import com.example.util.JsonHelper;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.sun.nio.sctp.NotificationHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,9 +24,9 @@ public class SwitchNodeRunner {
     @Autowired
     NodeService nodeService;
 
-    public void initSwitchNode(NodeInstance switchNode) {
+    public void initSwitchNode(NodeInstance switchNode) throws JsonProcessingException {
         String conditionStr = switchNode.getArg();
-        Map<String, String> conditionMap = JsonHelper.getMapper().convertValue(conditionStr, Map.class);
+        Map<String, String> conditionMap = JsonHelper.getMapper().readValue(conditionStr, new TypeReference<Map<String, String>>() {});
         String targetId = null;
         for (String key : conditionMap.keySet()) {
             if (evaluateCondition(key)) {
@@ -36,17 +38,18 @@ public class SwitchNodeRunner {
         if (conditionMap.containsKey(Const.SwitchDefault) && StringUtils.isEmpty(targetId)) {
             targetId = conditionMap.get(Const.SwitchDefault);
         }
-        NodeInstance targetNode = NodeInstance.builder()
+
+        NodeInstance targetNodeQueryParam = NodeInstance.builder()
                 .nodeId(targetId)
                 .build();
 
-        List<NodeInstance> nodeInstance = nodeService.findNode(targetNode);
+        List<NodeInstance> nodeInstance = nodeService.findNode(targetNodeQueryParam);
         if (nodeInstance.size() != 1) {
             logger.error("switch target node size not 1");
             return;
         }
 
-        targetNode = nodeInstance.get(0);
+        NodeInstance targetNode = nodeInstance.get(0);
         if (targetNode.getNodeStatus().equals(Const.INVALID)) {
             // invalid -> init
             targetNode.setNodeStatus(Const.INIT);
@@ -54,6 +57,27 @@ public class SwitchNodeRunner {
         } else {
             logger.error("target node status is not |invalid|, but: |{}|", targetNode.getNodeStatus());
         }
+        // 其他非 targetNode 全部置为 skipped
+        for (String nodeId : conditionMap.values()) {
+            if (nodeId.equalsIgnoreCase(targetId)) {
+                continue;
+            }
+            NodeInstance nodeQueryParam = NodeInstance.builder()
+                    .parentFlowId(switchNode.getParentFlowId())
+                    .nodeId(nodeId)
+                    .build();
+            nodeInstance = nodeService.findNode(nodeQueryParam);
+            if (nodeInstance.size() != 1) {
+                logger.error("failed to update node instance");
+            }
+
+            NodeInstance theNode = nodeInstance.get(0);
+            theNode.setNodeStatus(Const.SKIP);
+            nodeService.update(theNode);
+        }
+
+        switchNode.setNodeStatus(Const.SUCCESS);
+        nodeService.update(switchNode);
     }
 
     /**
@@ -62,6 +86,9 @@ public class SwitchNodeRunner {
      * @return
      */
     public boolean evaluateCondition(String condition) {
-        return true;
+        if (condition.equals("success")) {
+            return true;
+        }
+        return false;
     }
 }

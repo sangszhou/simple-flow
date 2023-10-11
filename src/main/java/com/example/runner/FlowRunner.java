@@ -61,7 +61,7 @@ public class FlowRunner {
 
         List<NodeInstance> nodeInstanceList = nodeService.findNode(invalidNode);
         long nonSuccessCnt = nodeInstanceList.stream().map(it -> it.getNodeStatus())
-                .filter(it -> !it.equals(Const.SUCCESS))
+                .filter(it -> !it.equals(Const.SUCCESS) && !it.equalsIgnoreCase(Const.SKIP))
                 .count();
         // 如果所有的孩子节点全部结束，那么父节点结束
         if (nonSuccessCnt == 0) {

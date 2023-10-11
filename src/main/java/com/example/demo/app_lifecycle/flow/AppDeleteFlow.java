@@ -24,24 +24,33 @@ public class AppDeleteFlow implements FlowBuilder {
 
         TaskDefinition deleteApp = TaskDefinition.builder()
                 .clazz(DeleteAppTask.class)
+                .name("deleteApp")
                 .build()
                 .constArg("appName", appName);
 
-        TaskDefinition notifyUser = TaskDefinition.builder()
+        TaskDefinition skipDeleteNotifyUser = TaskDefinition.builder()
                 .clazz(NotifyTask.class)
+                .name("skipDelete")
+                .build()
+                .constArg("notifyUser", flowInput.getOperator())
+                .constArg("result", "skipped");
+
+        TaskDefinition deletedNotifyUser = TaskDefinition.builder()
+                .clazz(NotifyTask.class)
+                .name("deleted")
                 .build()
                 .constArg("notifyUser", flowInput.getOperator())
                 .constArg("result", "executed");
 
         userTask.conditional()
                 .when("success", deleteApp)
-                .missingMatch(notifyUser);
+                .missingMatch(skipDeleteNotifyUser);
 
         // todo 如果让 notifyUser 感知到 deleteApp 是否执行了，要怎么传递呢？
         // 一种办法是创建两个 notifyUser
-        notifyUser.constArg("result", "skipped");
+
         deleteApp
-                .followBy(notifyUser);
+                .followBy(deletedNotifyUser);
 
         return userTask;
     }

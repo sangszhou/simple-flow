@@ -16,7 +16,7 @@ public class AppCreateFlow implements FlowBuilder {
 
     @Override
     public NodeDefinition build(FlowInput flowInput) throws JsonProcessingException {
-        String appName = flowInput.getInput().get("appName");
+        String appName = (String) flowInput.getInput().get("appName");
 
         TaskDefinition createAppTask = TaskDefinition.builder()
                 .name("创建应用")

@@ -39,7 +39,7 @@ public class NodeRunnerManager {
         }
     }
 
-    @Scheduled(initialDelay = 10000, fixedDelay = 20000)
+    @Scheduled(initialDelay = 10000, fixedDelay = 10000)
     public void initNode() throws Exception {
         logger.info("node runner manager init node");
         List<NodeInstance> initFlowNodeInst = findInitNode();
@@ -48,7 +48,7 @@ public class NodeRunnerManager {
         }
     }
 
-    @Scheduled(initialDelay = 10000, fixedDelay = 20000)
+    @Scheduled(initialDelay = 10000, fixedDelay = 10000)
     public void runningFlowNode() throws Exception {
         List<NodeInstance> runningFlowNode = findRunningFlowNode();
         for (NodeInstance nodeInstance : runningFlowNode) {

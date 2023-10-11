@@ -94,13 +94,14 @@ public class TaskNodeRunner {
             }
             NodeInstance srcNodeInst = instanceList.get(0);
             String output = srcNodeInst.getOutput();
-            Map<String, String> outputMap = JsonHelper.getMapper().readValue(output, new TypeReference<Map<String, String>>() {});
+            Map<String, Object> outputMap = JsonHelper.getMapper().readValue(output, new TypeReference<Map<String, Object>>() {});
             if (!outputMap.containsKey(srcField)) {
                 logger.error("src node has no field named: |{}|", srcField);
                 continue;
             }
-            String fieldStr = outputMap.get(srcField);
-            Object target = JsonHelper.getMapper().readValue(fieldStr, field.getType());
+            Object fieldObj = outputMap.get(srcField);
+            Object target = JsonHelper.getMapper().readValue(JsonHelper.getMapper().writeValueAsString(fieldObj),
+                    field.getType());
             field.set(instance, target);
         }
 

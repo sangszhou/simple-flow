@@ -13,5 +13,5 @@ public class FlowInput {
     }
 
     String operator;
-    Map<String, String> input;
+    Map<String, Object> input;
 }

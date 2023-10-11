@@ -75,7 +75,7 @@ public class AppLifecycleController {
                 .input(ImmutableMap.of(
                         "appName", appName,
                         "lb", lb,
-                        "num", num+""))
+                        "num", num))
                 .build();
         try {
             long id = flowService.startFlow(AppExpansionFlow.class, flowInput);

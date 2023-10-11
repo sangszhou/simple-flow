@@ -58,7 +58,6 @@ public class FlowRunner {
         NodeInstance invalidNode = NodeInstance.builder()
                 .parentFlowId(flowNode.getId())
                 .build();
-
         List<NodeInstance> nodeInstanceList = nodeService.findNode(invalidNode);
         long nonSuccessCnt = nodeInstanceList.stream().map(it -> it.getNodeStatus())
                 .filter(it -> !it.equals(Const.SUCCESS) && !it.equalsIgnoreCase(Const.SKIP))

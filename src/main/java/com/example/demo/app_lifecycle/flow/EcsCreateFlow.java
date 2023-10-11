@@ -13,8 +13,10 @@ public class EcsCreateFlow implements FlowBuilder {
 
     @Override
     public NodeDefinition build(FlowInput flowInput) throws JsonProcessingException {
-        int ecsNum = Integer.parseInt(flowInput.getInput().get("num"));
-        String lb = flowInput.getInput().get("lb");
+        // TODO 最好不要直接从 flowInput 中取数据，要利用字段的解析能力来取
+        // TODO 复杂结构，需要 jackson 转换
+        int ecsNum = (int)flowInput.getInput().get("num");
+        String lb = (String) flowInput.getInput().get("lb");
 
         TaskDefinition createEcs = TaskDefinition.builder()
                 .clazz(CreateEcsTask.class)

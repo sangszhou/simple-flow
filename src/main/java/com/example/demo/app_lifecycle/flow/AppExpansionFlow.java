@@ -16,9 +16,9 @@ public class AppExpansionFlow implements FlowBuilder {
 
     @Override
     public NodeDefinition build(FlowInput flowInput) throws JsonProcessingException {
-        String appName = flowInput.getInput().get("appName");
-        String num = flowInput.getInput().get("num");
-        String lb = flowInput.getInput().get("lb");
+        String appName = (String) flowInput.getInput().get("appName");
+        Integer num = (int) flowInput.getInput().get("num");
+        String lb = (String)flowInput.getInput().get("lb");
 
         logger.info("app expand, appName:|{}|, num:|{}|, lb:|{}|",
                 appName, num, lb);
